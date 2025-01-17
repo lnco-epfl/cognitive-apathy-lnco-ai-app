@@ -7,6 +7,7 @@ import {
   AllSettingsType,
   CalibrationSettingsType,
   GeneralSettingsType,
+  PhotoDiodeSettings,
   PracticeSettingsType,
   TaskSettingsType,
   ValidationSettingsType,
@@ -128,7 +129,8 @@ export class ExperimentState {
     };
     this.settings = {
       generalSettings: {
-        usePhotoDiode: settingsVariables.generalSettings.usePhotoDiode || 'off',
+        fontSize: settingsVariables.generalSettings.fontSize || 'normal',
+        useDevice: settingsVariables.generalSettings.useDevice || false,
       },
       practiceSettings: {
         numberOfPracticeLoops:
@@ -172,6 +174,20 @@ export class ExperimentState {
         taskBlockRepetitions: 2,
         taskPermutationRepetitions: 1,
         randomSkipChance: 0,
+      },
+      photoDiodeSettings: {
+        usePhotoDiode:
+          settingsVariables.photoDiodeSettings.usePhotoDiode || 'off',
+        photoDiodeLeft:
+          settingsVariables.photoDiodeSettings.photoDiodeLeft || undefined,
+        photoDiodeTop:
+          settingsVariables.photoDiodeSettings.photoDiodeTop || undefined,
+        photoDiodeWidth:
+          settingsVariables.photoDiodeSettings.photoDiodeWidth || undefined,
+        photoDiodeHeight:
+          settingsVariables.photoDiodeSettings.photoDiodeHeight || undefined,
+        testPhotoDiode:
+          settingsVariables.photoDiodeSettings.testPhotoDiode || undefined,
       },
     };
   }
@@ -218,6 +234,10 @@ export class ExperimentState {
     };
   }
 
+  getPhotoDiodeSettings(): PhotoDiodeSettings {
+    return this.settings.photoDiodeSettings;
+  }
+
   getCurrentSuccesses = (calibrationPart: CalibrationPartType): number =>
     this.state.currentCalibrationStepSuccesses[calibrationPart];
 
@@ -254,6 +274,14 @@ export class ExperimentState {
   // Update to say that the validation has been completed successfully
   setValidationSuccess(successful: boolean): void {
     this.state.validationState.validationSuccess = successful;
+  }
+
+  setFontSize(fontSize: string): void {
+    this.settings.generalSettings.fontSize = fontSize as
+      | 'small'
+      | 'normal'
+      | 'large'
+      | 'extra-large';
   }
 
   // Increment demo trial successes

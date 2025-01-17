@@ -43,6 +43,7 @@ import {
 } from '../utils/types';
 import {
   autoIncreaseAmountCalculation,
+  calculateTotalPoints,
   calculateTotalReward,
   changeProgressBar,
   checkFlag,
@@ -145,7 +146,9 @@ const generateTaskTrial = (
           isEnd: false,
         });
       }
-      sendPhotoDiodeTrigger(state.getGeneralSettings().usePhotoDiode, true);
+      
+      sendPhotoDiodeTrigger(state.getPhotoDiodeSettings().usePhotoDiode, true);
+      
       const keyTappedEarlyFlag = checkFlag(
         OtherTaskStagesType.Countdown,
         'keyTappedEarlyFlag',
@@ -166,7 +169,9 @@ const generateTaskTrial = (
           isEnd: true,
         });
       }
-      sendPhotoDiodeTrigger(state.getGeneralSettings().usePhotoDiode, true);
+
+      sendPhotoDiodeTrigger(state.getPhotoDiodeSettings().usePhotoDiode, true);
+
       if (demo) {
         // eslint-disable-next-line no-param-reassign
         data.minimumTapsReached = data.tapCount > MINIMUM_DEMO_TAPS;
@@ -360,7 +365,7 @@ export const createTaskBlockTrials = (
               });
             }
             sendPhotoDiodeTrigger(
-              state.getGeneralSettings().usePhotoDiode,
+              state.getPhotoDiodeSettings().usePhotoDiode,
               false,
             );
           },
@@ -377,7 +382,7 @@ export const createTaskBlockTrials = (
               });
             }
             sendPhotoDiodeTrigger(
-              state.getGeneralSettings().usePhotoDiode,
+              state.getPhotoDiodeSettings().usePhotoDiode,
               true,
             );
             // eslint-disable-next-line no-param-reassign
@@ -433,8 +438,11 @@ export const createRewardDisplayTrial = (
   type: htmlButtonResponse,
   choices: [CONTINUE_BUTTON_MESSAGE],
   stimulus() {
+    // TODO: Add Currency and Total Reward as configuration
     const totalSuccessfulReward = calculateTotalReward(jsPsych);
-    return `<p>${REWARD_TOTAL_MESSAGE(totalSuccessfulReward.toFixed(0))}</p>`;
+    const totalPoints = calculateTotalPoints(state);
+    const totalMoney = 8; // connection to state
+    return `<p>${REWARD_TOTAL_MESSAGE(totalSuccessfulReward.toFixed(0), ((totalSuccessfulReward / totalPoints) * totalMoney).toFixed(2), 'USD')}</p>`;
   },
   data: {
     task: 'display_reward',
